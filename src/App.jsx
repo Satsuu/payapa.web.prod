@@ -14,7 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import Student from "./pages/Students";
 import Appointments from "./pages/Appointment";
 
-import NavigationBar from "./components/NavigationBar";
+import NavigationBar from "./components/NavBar";
 import PrivateRoute from "./components/PrivateRoute";
 
 function AppContent() {
