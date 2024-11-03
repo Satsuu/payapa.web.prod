@@ -1,0 +1,22 @@
+@font-face {
+  font-family: "Colon Mono";
+  src: url("./fonts/colon-mono.woff2") format("woff2"),
+    url("./fonts/colon-mono.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #696969;
+  border-radius: 20px; /* Set the border-radius to make it round */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #696969;
+}
