@@ -7,6 +7,7 @@ const useUserDocument = () => {
   const { currentUser } = useUser();
   const [documentExists, setDocumentExists] = useState(false);
   const [userCourses, setUserCourses] = useState([]);
+  const [userRole, setUserRole] = useState("");
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -26,12 +27,18 @@ const useUserDocument = () => {
             const userData = userDoc.data();
             console.log(`Document exists for userId ${userId}`);
 
-            // Get the Courses array from the document
             if (userData.Courses) {
-              setUserCourses(userData.Courses); // Store courses
+              setUserCourses(userData.Courses);
               console.log("Courses array:", userData.Courses);
             } else {
               console.log("No Courses array found in the document.");
+            }
+
+            if (userData.Role) {
+              setUserRole(userData.Role);
+              console.log("Current User Role:", userData.Role);
+            } else {
+              console.log("No Role found in the document.");
             }
           } else {
             console.log(`No document found for userId ${userId}`);
@@ -50,7 +57,7 @@ const useUserDocument = () => {
     checkUserDocument();
   }, [currentUser]);
 
-  return { documentExists, userCourses, error };
+  return { documentExists, userCourses, userRole, error };
 };
 
 export default useUserDocument;
