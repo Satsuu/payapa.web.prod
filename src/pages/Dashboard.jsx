@@ -21,12 +21,13 @@ import useFilteredUsers from "../hooks/useFilteredUsers";
 
 function Dashboard() {
   const { users, loading, error } = useFetchUsers();
-  const { userCourses, error: isError } = useUserDocument();
-  const filteredUsers = useFilteredUsers(users, userCourses);
+  const { userCourses, userRole, error: isError } = useUserDocument();
   const [selectedUser, setSelectedUser] = useState(null);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  const filteredUsers = useFilteredUsers(users, userCourses);
 
   useEffect(() => {
     if (isError) {
@@ -76,6 +77,8 @@ function Dashboard() {
     }
   };
 
+  const displayedUsers = userRole === "subadmin" ? filteredUsers : users;
+
   return (
     <>
       <Container className="mt-5">
@@ -91,7 +94,7 @@ function Dashboard() {
           {!loading && !error && (
             <Row style={{ height: "800px" }}>
               <Col sm={4} style={{ maxHeight: "100%", overflowY: "auto" }}>
-                {filteredUsers.map((user) => (
+                {displayedUsers.map((user) => (
                   <Card
                     key={user.id}
                     className="mb-3"
