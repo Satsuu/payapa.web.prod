@@ -15,6 +15,7 @@ function useFetchUsers() {
           id: doc.id,
           ...doc.data(),
         }));
+        console.log("Fetched Users:", usersList);
         setUsers(usersList);
       } catch (err) {
         setError(err);

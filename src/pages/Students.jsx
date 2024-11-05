@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "../index.css";
-
 import { Container, Breadcrumb, Card, Table, Button } from "react-bootstrap";
 import useFetchUsers from "../hooks/useFetchUsers";
 import useStatus from "../hooks/useStatus";
@@ -93,6 +92,7 @@ function Student() {
                     </th>
                     <th>Status</th>
                     <th>Ave Status</th>
+                    <th className="text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -114,6 +114,11 @@ function Student() {
                           {userScore
                             ? getStarIcons(userScore.score)
                             : "No Average Status"}
+                        </td>
+                        <td className="text-center">
+                          <Button variant="outline-primary" size="sm">
+                            Notify
+                          </Button>
                         </td>
                       </tr>
                     );

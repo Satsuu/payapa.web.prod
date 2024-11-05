@@ -14,21 +14,25 @@ import { toast } from "react-toastify";
 import UserDetailsModal from "../components/UserDetailsModal";
 
 import { firestore } from "../services/Firebase";
-import {
-  collection,
-  getDocs,
-  doc,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
+import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import useFetchUsers from "../hooks/useFetchUsers";
+import useUserDocument from "../hooks/useUserDocument";
+import useFilteredUsers from "../hooks/useFilteredUsers";
 
 function Dashboard() {
   const { users, loading, error } = useFetchUsers();
+  const { userCourses, error: isError } = useUserDocument();
+  const filteredUsers = useFilteredUsers(users, userCourses);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (isError) {
+      console.error("Error encountered while checking document:", isError);
+    }
+  }, [isError]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -87,7 +91,7 @@ function Dashboard() {
           {!loading && !error && (
             <Row style={{ height: "800px" }}>
               <Col sm={4} style={{ maxHeight: "100%", overflowY: "auto" }}>
-                {users.map((user) => (
+                {filteredUsers.map((user) => (
                   <Card
                     key={user.id}
                     className="mb-3"
