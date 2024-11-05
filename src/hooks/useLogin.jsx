@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { auth } from "../services/Firebase";
+import { auth, firestore } from "../services/Firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { useUser } from "../services/UserContext";
 import { useNavigate } from "react-router-dom";
@@ -26,13 +27,21 @@ const useLogin = () => {
         password
       );
       const user = userCredential.user;
+      const userId = user.uid;
 
-      if (email === "admin@gmail.com") {
+      // Check if a document exists in Firestore with documentId equal to userId
+      const userDocRef = doc(firestore, "authentication", userId);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        console.log("User found in authentication collection:", userDoc.data());
         setCurrentUser(user);
-        toast.success("Logged in successfully");
         navigate("/dashboard");
       } else {
-        toast.error("Admin Permission Needed");
+        console.log(
+          "No document found with matching uid in authentication collection."
+        );
+        toast.error("User not found in authentication collection");
       }
     } catch (error) {
       toast.error("Admin Permission Needed");
