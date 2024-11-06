@@ -103,7 +103,10 @@ function Student() {
                     <th>ID</th>
                     <th className="d-flex justify-content-between">
                       Course
-                      <FilterDropdown onSelect={handleFilterSelect} />
+                      <FilterDropdown
+                        onSelect={handleFilterSelect}
+                        currentUserCourses={userCourses}
+                      />
                     </th>
                     <th>Status</th>
                     <th>Ave Status</th>
