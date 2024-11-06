@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 
-const FilterDropdown = ({ onSelect }) => {
+const FilterDropdown = ({ onSelect, currentUserCourses }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const toggleDropdown = () => {
@@ -14,7 +14,7 @@ const FilterDropdown = ({ onSelect }) => {
     setShowDropdown(false);
   };
 
-  const courses = ["CITE", "CCJE", "CHUMS", "CTE", "CHTM", "CAS", "CEA", "COP"];
+  const courses = currentUserCourses || [];
 
   return (
     <div style={{ position: "relative", display: "inline-block" }}>
@@ -34,11 +34,15 @@ const FilterDropdown = ({ onSelect }) => {
           <Dropdown.Item onClick={() => handleSelect("")}>
             All Courses
           </Dropdown.Item>
-          {courses.map((course) => (
-            <Dropdown.Item key={course} onClick={() => handleSelect(course)}>
-              {course}
-            </Dropdown.Item>
-          ))}
+          {courses.length > 0 ? (
+            courses.map((course) => (
+              <Dropdown.Item key={course} onClick={() => handleSelect(course)}>
+                {course}
+              </Dropdown.Item>
+            ))
+          ) : (
+            <Dropdown.Item disabled>No courses available</Dropdown.Item>
+          )}
         </Dropdown.Menu>
       )}
     </div>
