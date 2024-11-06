@@ -1,9 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../index.css";
 import { Container, Breadcrumb, Card, Table, Button } from "react-bootstrap";
-import useFetchUsers from "../hooks/useFetchUsers";
-import useStatus from "../hooks/useStatus";
-import useAverageStatus from "../hooks/useAverageStatus";
+
 import FilterDropdown from "../components/CourseFilter";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -11,19 +9,34 @@ import Tooltip from "@mui/material/Tooltip";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
+import useFetchUsers from "../hooks/useFetchUsers";
+import useStatus from "../hooks/useStatus";
+import useAverageStatus from "../hooks/useAverageStatus";
+import useUserDocument from "../hooks/useUserDocument";
+import useFilteredUsers from "../hooks/useFilteredUsers";
+
 function Student() {
   const { users } = useFetchUsers();
+  const { userCourses, userRole, error: isError } = useUserDocument();
   const { labels } = useStatus();
   const { score } = useAverageStatus();
   const [selectedCourse, setSelectedCourse] = useState("");
+
+  const filteredUsers = useFilteredUsers(users, userCourses);
+
+  useEffect(() => {
+    if (isError) {
+      console.error("Error encountered while checking document:", isError);
+    }
+  }, [isError]);
 
   const handleFilterSelect = (course) => {
     setSelectedCourse(course);
   };
 
-  const filteredUsers = selectedCourse
-    ? users.filter((user) => user.course === selectedCourse)
-    : users;
+  const filteredUsersTable = selectedCourse
+    ? filteredUsers.filter((user) => user.course === selectedCourse)
+    : filteredUsers.filter((user) => userCourses.includes(user.course));
 
   const getStarIcons = (scoreValue) => {
     const stars = [];
@@ -50,6 +63,8 @@ function Student() {
       doc.save("students.pdf");
     });
   };
+
+  const displayedUsers = userRole === "subadmin" ? filteredUsersTable : users;
 
   return (
     <>
@@ -96,7 +111,7 @@ function Student() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUsers.map((user) => {
+                  {displayedUsers.map((user) => {
                     const userLabel = labels.find(
                       (labelData) => labelData.id === user.id
                     );
