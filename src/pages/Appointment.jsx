@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "../index.css";
 
 import {
@@ -14,21 +14,26 @@ import {
 
 import useAppointments from "../hooks/useAppointments";
 import useSaveAppointment from "../hooks/useSaveAppointment";
+import useUserDocument from "../hooks/useUserDocument";
 import AddIcon from "@mui/icons-material/Add";
 import { toast } from "react-toastify";
 
 function Appointments() {
-  const { appointments = [], loading, error } = useAppointments();
+  const { filteredAppointments, loading, error } = useAppointments();
   const {
     saveAppointment,
     loading: savingLoading,
     error: savingError,
   } = useSaveAppointment();
+  const { userRole } = useUserDocument();
   const [selectedUser, setSelectedUser] = useState(null);
   const [showAppointmentForm, setShowAppointmentForm] = useState(false);
   const [appointmentDate, setAppointmentDate] = useState("");
   const [appointmentTime, setAppointmentTime] = useState("");
   const [appointmentMessage, setAppointmentMessage] = useState("");
+
+  const displayedAppointments =
+    userRole === "subadmin" ? filteredAppointments : filteredAppointments;
 
   const handleUserClick = (appointment) => {
     setSelectedUser(appointment.user);
@@ -82,7 +87,7 @@ function Appointments() {
           {!loading && !error && (
             <Row>
               <Col sm={4}>
-                {appointments
+                {displayedAppointments
                   .filter((appointment) => appointment.user)
                   .map((appointment) => (
                     <Card
