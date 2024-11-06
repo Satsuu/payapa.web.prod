@@ -44,6 +44,14 @@ function Appointments() {
     setShowAppointmentForm(!showAppointmentForm);
   };
 
+  const isCurrentlyBusinessHours = () => {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const hours = now.getHours();
+
+    return dayOfWeek >= 1 && dayOfWeek <= 5 && hours >= 8 && hours < 17;
+  };
+
   const handleConfirmAppointment = async () => {
     if (selectedUser) {
       if (!appointmentDate || !appointmentTime || !appointmentMessage) {
@@ -125,6 +133,12 @@ function Appointments() {
                                 className="me-2 d-flex justify-content-between align-items-center"
                                 size="sm"
                                 onClick={handleSetAppointmentClick}
+                                disabled={!isCurrentlyBusinessHours()}
+                                title={
+                                  !isCurrentlyBusinessHours()
+                                    ? "Appointments can only be set during business hours (Mon-Fri, 8 AM - 5 PM)"
+                                    : ""
+                                }
                               >
                                 <AddIcon className="me-2" /> Set Appointment
                               </Button>
