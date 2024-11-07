@@ -15,10 +15,14 @@ import {
 import useAppointments from "../hooks/useAppointments";
 import useSaveAppointment from "../hooks/useSaveAppointment";
 import useUserDocument from "../hooks/useUserDocument";
+import useFetchScheduledAppointment from "../hooks/useFetchScheduledAppointment";
+
 import AddIcon from "@mui/icons-material/Add";
 import { toast } from "react-toastify";
+import ScheduledAppointmentTable from "../components/ScheduledAppointment";
 
 function Appointments() {
+  const [selectedUser, setSelectedUser] = useState(null);
   const { filteredAppointments, loading, error } = useAppointments();
   const {
     saveAppointment,
@@ -26,7 +30,9 @@ function Appointments() {
     error: savingError,
   } = useSaveAppointment();
   const { userRole } = useUserDocument();
-  const [selectedUser, setSelectedUser] = useState(null);
+  const { scheduledAppointment } = useFetchScheduledAppointment(
+    selectedUser?.uid
+  );
   const [showAppointmentForm, setShowAppointmentForm] = useState(false);
   const [appointmentDate, setAppointmentDate] = useState("");
   const [appointmentTime, setAppointmentTime] = useState("");
@@ -38,6 +44,7 @@ function Appointments() {
   const handleUserClick = (appointment) => {
     setSelectedUser(appointment.user);
     console.log("Selected User:", appointment.user);
+    console.log("Selected User UID:", appointment.user.uid);
   };
 
   const handleSetAppointmentClick = () => {
@@ -153,7 +160,7 @@ function Appointments() {
                 </div>
                 <Row className="mt-3">
                   <Col>
-                    <Card>
+                    <Card className="h-100">
                       <Card.Body>
                         <div className="d-flex justify-content-between align-items-center mb-2">
                           <strong>Message</strong>
@@ -162,6 +169,7 @@ function Appointments() {
                           <textarea
                             value={selectedUser.reasonForStress}
                             disabled
+                            rows={10}
                             style={{ width: "100%" }}
                           />
                         ) : (
@@ -172,7 +180,7 @@ function Appointments() {
                   </Col>
                   {showAppointmentForm && (
                     <Col>
-                      <Card>
+                      <Card className="h-100">
                         <Card.Body>
                           <Form>
                             <Form.Group controlId="appointmentDate">
@@ -236,6 +244,14 @@ function Appointments() {
                     </Col>
                   )}
                 </Row>
+                {selectedUser && (
+                  <Col className="mt-3">
+                    <ScheduledAppointmentTable
+                      appointments={scheduledAppointment}
+                      selectedUser={selectedUser}
+                    />
+                  </Col>
+                )}
               </Col>
             </Row>
           )}
