@@ -140,9 +140,9 @@ function Appointments() {
                                 className="me-2 d-flex justify-content-between align-items-center"
                                 size="sm"
                                 onClick={handleSetAppointmentClick}
-                                disabled={isCurrentlyBusinessHours()}
+                                disabled={!isCurrentlyBusinessHours()}
                                 title={
-                                  isCurrentlyBusinessHours()
+                                  !isCurrentlyBusinessHours()
                                     ? "Appointments can only be set during business hours (Mon-Fri, 8 AM - 5 PM)"
                                     : ""
                                 }
