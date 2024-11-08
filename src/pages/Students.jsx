@@ -14,12 +14,14 @@ import useStatus from "../hooks/useStatus";
 import useAverageStatus from "../hooks/useAverageStatus";
 import useUserDocument from "../hooks/useUserDocument";
 import useFilteredUsers from "../hooks/useFilteredUsers";
+import useNotification from "../hooks/useNotification";
 
 function Student() {
   const { users } = useFetchUsers();
   const { userCourses, userRole, error: isError } = useUserDocument();
   const { labels } = useStatus();
   const { score } = useAverageStatus();
+  const { updateNotificationStatus } = useNotification();
   const [selectedCourse, setSelectedCourse] = useState("");
 
   const filteredUsers = useFilteredUsers(users, userCourses);
@@ -65,6 +67,19 @@ function Student() {
   };
 
   const displayedUsers = userRole === "subadmin" ? filteredUsersTable : users;
+
+  const handleNotifyClick = async (uid) => {
+    try {
+      const result = await updateNotificationStatus(uid);
+      if (result.success) {
+        console.log(result.message);
+      } else {
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error("Failed to send notification:", error);
+    }
+  };
 
   return (
     <>
@@ -134,7 +149,11 @@ function Student() {
                             : "No Average Status"}
                         </td>
                         <td className="text-center">
-                          <Button variant="outline-primary" size="sm">
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={() => handleNotifyClick(user.id)} // Changed from user.uid to user.id
+                          >
                             Notify
                           </Button>
                         </td>
