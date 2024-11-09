@@ -37,8 +37,14 @@ function Student() {
   };
 
   const filteredUsersTable = selectedCourse
-    ? filteredUsers.filter((user) => user.course === selectedCourse)
-    : filteredUsers.filter((user) => userCourses.includes(user.course));
+    ? filteredUsers.filter(
+        (user) => user.course.toLowerCase() === selectedCourse.toLowerCase()
+      )
+    : filteredUsers.filter((user) =>
+        userCourses.some(
+          (course) => course.toLowerCase() === user.course.toLowerCase()
+        )
+      );
 
   const getStarIcons = (scoreValue) => {
     const stars = [];
@@ -66,7 +72,14 @@ function Student() {
     });
   };
 
-  const displayedUsers = userRole === "subadmin" ? filteredUsersTable : users;
+  const displayedUsers =
+    userRole === "subadmin"
+      ? filteredUsersTable // subadmins can only see their assigned courses
+      : selectedCourse // superadmins can see all courses
+      ? users.filter(
+          (user) => user.course.toLowerCase() === selectedCourse.toLowerCase()
+        )
+      : users;
 
   const handleNotifyClick = async (uid) => {
     try {
