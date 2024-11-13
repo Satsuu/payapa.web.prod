@@ -91,7 +91,12 @@ function Monitoring() {
                     )}
                   </td>
                   <td>{}</td>
-                  <td>{}</td>
+                  <td><Button
+                      variant="info"
+                      onClick={""}
+                    >
+                      Update
+                    </Button></td>
                 </tr>
               ))}
             </tbody>
