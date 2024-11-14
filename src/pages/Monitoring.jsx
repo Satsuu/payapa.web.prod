@@ -8,6 +8,7 @@ import {
   Button,
   Tooltip,
   OverlayTrigger,
+  Card,
 } from "react-bootstrap";
 import useFetchUsers from "../hooks/useFetchUsers";
 import MonitoringModal from "../components/MonitoringModal";
@@ -16,7 +17,7 @@ import useAverageStatus from "../hooks/useAverageStatus";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import useNotification from "../hooks/useNotification";
-import { getAuth } from 'firebase/auth'
+import { getAuth } from "firebase/auth";
 
 function Monitoring() {
   const { users, loading: usersLoading, error: usersError } = useFetchUsers();
@@ -24,16 +25,16 @@ function Monitoring() {
   const [selectedUser, setSelectedUser] = useState(null);
   const { score } = useAverageStatus();
   const { updateNotificationStatus } = useNotification();
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false)
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const userIds = useMemo(() => users.map((user) => user.id), [users]);
 
   useEffect(() => {
-    const auth = getAuth()
-    const currentUser = auth.currentUser
-    if (currentUser && currentUser.email === 'super_admin@gmail.com') {
-      setIsSuperAdmin(true)
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    if (currentUser && currentUser.email === "super_admin@gmail.com") {
+      setIsSuperAdmin(true);
     }
-  }, [])
+  }, []);
 
   const {
     sentiments,
@@ -85,7 +86,9 @@ function Monitoring() {
       );
     }
 
-    return <div style={{ display: "flex", justifyContent: "center" }}>{stars}</div>;
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>{stars}</div>
+    );
   };
 
   const findUserScore = (userId) => {
@@ -114,53 +117,53 @@ function Monitoring() {
         )}
 
         {!usersLoading && !usersError && (
-          <Table striped bordered hover className="mt-4">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Student ID</th>
-                <th>Course</th>
-                {isSuperAdmin && (
-                <th>Details</th>
-                )}
-                <th>Sentiment Analysis</th>
-                <th>Psychological Assessment</th>
-                <th>Update</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => {
-                const userScore = findUserScore(user.id);
-                return (
-                  <tr key={user.id}>
-                    <td>{`${user.firstName} ${user.lastName}`}</td>
-                    <td>{user.studentID}</td>
-                    <td>{user.course}</td>
-                    {isSuperAdmin && (
-                    <td>
-                      <Button
-                        variant="info"
-                        onClick={() => handleShowModal(user)}
-                      >
-                        View Details
-                      </Button>
-                    </td>
-                    )}
-                    <td>
-                      {sentimentsLoading ? (
-                        <Spinner animation="border" size="sm" />
-                      ) : sentimentsError ? (
-                        <Alert variant="danger">Error</Alert>
-                      ) : (
-                        sentiments[user.id] || "No sentiment data"
-                      )}
-                    </td>
-                    <td className="text-center">
-                      {userScore !== null
-                        ? getStarIcons(userScore)
-                        : "No Average Status"}
-                    </td>
-                    <td className="text-center">
+          <Card className="cursor-pointer">
+            <Card.Body>
+              <Table bordered responsive className="mt-4">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Student ID</th>
+                    <th>Course</th>
+                    {isSuperAdmin && <th>Details</th>}
+                    <th>Sentiment Analysis</th>
+                    <th>Psychological Assessment</th>
+                    <th>Update</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => {
+                    const userScore = findUserScore(user.id);
+                    return (
+                      <tr key={user.id}>
+                        <td>{`${user.firstName} ${user.lastName}`}</td>
+                        <td>{user.studentID}</td>
+                        <td>{user.course}</td>
+                        {isSuperAdmin && (
+                          <td>
+                            <Button
+                              variant="info"
+                              onClick={() => handleShowModal(user)}
+                            >
+                              View Details
+                            </Button>
+                          </td>
+                        )}
+                        <td>
+                          {sentimentsLoading ? (
+                            <Spinner animation="border" size="sm" />
+                          ) : sentimentsError ? (
+                            <Alert variant="danger">Error</Alert>
+                          ) : (
+                            sentiments[user.id] || "No sentiment data"
+                          )}
+                        </td>
+                        <td className="text-center">
+                          {userScore !== null
+                            ? getStarIcons(userScore)
+                            : "No Average Status"}
+                        </td>
+                        <td className="text-center">
                           <Button
                             variant="outline-primary"
                             size="sm"
@@ -169,11 +172,13 @@ function Monitoring() {
                             Notify
                           </Button>
                         </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            </Card.Body>
+          </Card>
         )}
 
         <MonitoringModal
