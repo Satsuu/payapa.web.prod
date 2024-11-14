@@ -92,13 +92,13 @@ function NavigationBar() {
             >
               Monitoring
             </Nav.Link>
-            <Nav.Link
+            {/* <Nav.Link
               as={Link}
               to="/student"
               active={location.pathname === "/student"}
             >
               Students
-            </Nav.Link>
+            </Nav.Link> */}
             <Nav.Link
               as={Link}
               to="/appointments"
