@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { firestore } from "../services/Firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 
 const useSaveAppointment = () => {
   const [loading, setLoading] = useState(false);
@@ -11,21 +11,19 @@ const useSaveAppointment = () => {
     setError(null);
 
     try {
-      const userDoc = doc(
+      const userAppointmentsRef = collection(
         firestore,
         "scheduledAppointments",
-        appointmentData.userId
+        appointmentData.userId,
+        "appointments"
       );
 
-      await setDoc(
-        userDoc,
-        {
-          date: appointmentData.date,
-          time: appointmentData.time,
-          message: appointmentData.message,
-        },
-        { merge: true }
-      );
+      await addDoc(userAppointmentsRef, {
+        date: appointmentData.date,
+        time: appointmentData.time,
+        message: appointmentData.message,
+        respond: "Pending",
+      });
 
       return true;
     } catch (err) {

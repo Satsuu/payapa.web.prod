@@ -1,5 +1,4 @@
-import Table from "react-bootstrap/Table";
-import Card from "react-bootstrap/Card";
+import { Button, Card, Table } from "react-bootstrap";
 
 function ScheduledAppointmentTable({ appointments, selectedUser }) {
   // Sort appointments by date and time
@@ -16,12 +15,14 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
           <strong>Scheduled Appointments</strong>
         </div>
         {selectedUser && (
-          <Table striped bordered hover responsive>
+          <Table bordered responsive>
             <thead>
               <tr>
                 <th>Date</th>
                 <th>Time</th>
                 <th>Message</th>
+                <th>Respond</th>
+                <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -30,6 +31,16 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
                   <td>{appointment.date}</td>
                   <td>{appointment.time}</td>
                   <td>{appointment.message}</td>
+                  <td>{appointment.respond}</td>
+                  <td className="text-center">
+                    <Button
+                      variant="success"
+                      size="sm"
+                      disabled={appointment.respond === "Pending"}
+                    >
+                      Finish Appointment
+                    </Button>
+                  </td>
                 </tr>
               ))}
               {sortedAppointments.length === 0 && (
