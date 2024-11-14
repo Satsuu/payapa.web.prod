@@ -15,12 +15,14 @@ import useFetchSentiment from "../hooks/useFetchSentiment";
 import useAverageStatus from "../hooks/useAverageStatus";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import useNotification from "../hooks/useNotification";
 
 function Monitoring() {
   const { users, loading: usersLoading, error: usersError } = useFetchUsers();
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const { score } = useAverageStatus();
+  const { updateNotificationStatus } = useNotification();
 
   const userIds = useMemo(() => users.map((user) => user.id), [users]);
 
@@ -38,6 +40,19 @@ function Monitoring() {
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedUser(null);
+  };
+
+  const handleNotifyClick = async (uid) => {
+    try {
+      const result = await updateNotificationStatus(uid);
+      if (result.success) {
+        console.log(result.message);
+      } else {
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error("Failed to send notification:", error);
+    }
   };
 
   const getStarIcons = (scoreValue) => {
@@ -132,11 +147,15 @@ function Monitoring() {
                         ? getStarIcons(userScore)
                         : "No Average Status"}
                     </td>
-                    <td>
-                      <Button variant="info" onClick={() => {}}>
-                        Update
-                      </Button>
-                    </td>
+                    <td className="text-center">
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={() => handleNotifyClick(user.id)}
+                          >
+                            Notify
+                          </Button>
+                        </td>
                   </tr>
                 );
               })}
