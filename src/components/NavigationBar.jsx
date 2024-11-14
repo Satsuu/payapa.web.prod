@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Navbar,
   Container,
@@ -73,6 +73,13 @@ function NavigationBar() {
           <Nav className="mx-auto breadcrumb-nav d-flex align-items-center">
             <Nav.Link
               as={Link}
+              to="/user_approval"
+              active={location.pathname === "/user_approval"}
+            >
+              User Approval
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
               to="/dashboard"
               active={location.pathname === "/dashboard"}
             >
@@ -80,11 +87,18 @@ function NavigationBar() {
             </Nav.Link>
             <Nav.Link
               as={Link}
+              to="/monitoring"
+              active={location.pathname === "/monitoring"}
+            >
+              Monitoring
+            </Nav.Link>
+            {/* <Nav.Link
+              as={Link}
               to="/student"
               active={location.pathname === "/student"}
             >
               Students
-            </Nav.Link>
+            </Nav.Link> */}
             <Nav.Link
               as={Link}
               to="/appointments"

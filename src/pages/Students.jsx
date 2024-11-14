@@ -53,7 +53,7 @@ function Student() {
     for (let i = 0; i < maxStars; i++) {
       stars.push(
         <Tooltip title={`Score: ${scoreValue}`} key={i}>
-          {i < filledStars ? <StarIcon /> : <StarBorderIcon />}
+          {i < filledStars ? <StarIcon style={{ color: "#ffc107" }} /> : <StarBorderIcon style={{ color: "#ffc107" }} />}
         </Tooltip>
       );
     }

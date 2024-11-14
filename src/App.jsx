@@ -1,4 +1,3 @@
-import React from "react";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -13,6 +12,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Student from "./pages/Students";
 import Appointments from "./pages/Appointment";
+import UserApproval from "./pages/UserApproval";
+import Monitoring from "./pages/Monitoring";
 
 import NavigationBar from "./components/NavigationBar";
 import PrivateRoute from "./components/PrivateRoute";
@@ -29,10 +30,26 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route
+          path="/user_approval"
+          element={
+            <PrivateRoute>
+              <UserApproval />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/dashboard"
           element={
             <PrivateRoute>
               <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/monitoring"
+          element={
+            <PrivateRoute>
+              <Monitoring />
             </PrivateRoute>
           }
         />
