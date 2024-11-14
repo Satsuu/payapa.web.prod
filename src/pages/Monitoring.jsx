@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Breadcrumb,
   Container,
@@ -16,6 +16,7 @@ import useAverageStatus from "../hooks/useAverageStatus";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import useNotification from "../hooks/useNotification";
+import { getAuth } from 'firebase/auth'
 
 function Monitoring() {
   const { users, loading: usersLoading, error: usersError } = useFetchUsers();
@@ -23,8 +24,16 @@ function Monitoring() {
   const [selectedUser, setSelectedUser] = useState(null);
   const { score } = useAverageStatus();
   const { updateNotificationStatus } = useNotification();
-
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false)
   const userIds = useMemo(() => users.map((user) => user.id), [users]);
+
+  useEffect(() => {
+    const auth = getAuth()
+    const currentUser = auth.currentUser
+    if (currentUser && currentUser.email === 'super_admin@gmail.com') {
+      setIsSuperAdmin(true)
+    }
+  }, [])
 
   const {
     sentiments,
@@ -111,7 +120,9 @@ function Monitoring() {
                 <th>Name</th>
                 <th>Student ID</th>
                 <th>Course</th>
+                {isSuperAdmin && (
                 <th>Details</th>
+                )}
                 <th>Sentiment Analysis</th>
                 <th>Psychological Assessment</th>
                 <th>Update</th>
@@ -125,6 +136,7 @@ function Monitoring() {
                     <td>{`${user.firstName} ${user.lastName}`}</td>
                     <td>{user.studentID}</td>
                     <td>{user.course}</td>
+                    {isSuperAdmin && (
                     <td>
                       <Button
                         variant="info"
@@ -133,6 +145,7 @@ function Monitoring() {
                         View Details
                       </Button>
                     </td>
+                    )}
                     <td>
                       {sentimentsLoading ? (
                         <Spinner animation="border" size="sm" />
