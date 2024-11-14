@@ -36,7 +36,7 @@ const useLogin = () => {
       if (userDoc.exists()) {
         console.log("User found in authentication collection:", userDoc.data());
         setCurrentUser(user);
-        navigate("/dashboard");
+        navigate("/user_approval");
       } else {
         console.log(
           "No document found with matching uid in authentication collection."
