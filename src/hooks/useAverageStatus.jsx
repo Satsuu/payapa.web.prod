@@ -14,9 +14,11 @@ const useAverageStatus = () => {
         const scoresData = scoreSnapshot.docs.map((doc) => ({
           id: doc.id,
           score: doc.data().score,
+          stress_level: doc.data().stress_level,
         }));
 
         console.log("Score: ", scoresData);
+        
         setScore(scoresData);
       } catch (error) {
         console.error("Error fetching scores: ", error);
