@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo } from "react";
 import {
   Breadcrumb,
   Container,
@@ -6,33 +6,68 @@ import {
   Spinner,
   Alert,
   Button,
-} from 'react-bootstrap'
-import useFetchUsers from '../hooks/useFetchUsers'
-import MonitoringModal from '../components/MonitoringModal'
-import useFetchSentiment from '../hooks/useFetchSentiment'
+  Tooltip,
+  OverlayTrigger,
+} from "react-bootstrap";
+import useFetchUsers from "../hooks/useFetchUsers";
+import MonitoringModal from "../components/MonitoringModal";
+import useFetchSentiment from "../hooks/useFetchSentiment";
+import useAverageStatus from "../hooks/useAverageStatus";
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 
 function Monitoring() {
-  const { users, loading: usersLoading, error: usersError } = useFetchUsers()
-  const [showModal, setShowModal] = useState(false)
-  const [selectedUser, setSelectedUser] = useState(null)
+  const { users, loading: usersLoading, error: usersError } = useFetchUsers();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const { score } = useAverageStatus();
 
-  const userIds = useMemo(() => users.map((user) => user.id), [users])
+  const userIds = useMemo(() => users.map((user) => user.id), [users]);
 
   const {
     sentiments,
     loading: sentimentsLoading,
     error: sentimentsError,
-  } = useFetchSentiment(userIds)
+  } = useFetchSentiment(userIds);
 
   const handleShowModal = (user) => {
-    setSelectedUser(user)
-    setShowModal(true)
-  }
+    setSelectedUser(user);
+    setShowModal(true);
+  };
 
   const handleCloseModal = () => {
-    setShowModal(false)
-    setSelectedUser(null)
-  }
+    setShowModal(false);
+    setSelectedUser(null);
+  };
+
+  const getStarIcons = (scoreValue) => {
+    const stars = [];
+    const maxStars = 5;
+    const filledStars = Math.floor(scoreValue / 10);
+
+    for (let i = 0; i < maxStars; i++) {
+      stars.push(
+        <OverlayTrigger
+          key={i}
+          placement="top"
+          overlay={<Tooltip>Score: {scoreValue}</Tooltip>}
+        >
+          {i < filledStars ? (
+            <StarIcon style={{ color: "#ffc107" }} />
+          ) : (
+            <StarBorderIcon style={{ color: "#ffc107" }} />
+          )}
+        </OverlayTrigger>
+      );
+    }
+
+    return <div style={{ display: "flex", justifyContent: "center" }}>{stars}</div>;
+  };
+
+  const findUserScore = (userId) => {
+    const userScore = score.find((s) => s.id === userId);
+    return userScore ? userScore.score : null;
+  };
 
   return (
     <>
@@ -68,37 +103,43 @@ function Monitoring() {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{`${user.firstName} ${user.lastName}`}</td>
-                  <td>{user.studentID}</td>
-                  <td>{user.course}</td>
-                  <td>
-                    <Button
-                      variant="info"
-                      onClick={() => handleShowModal(user)}
-                    >
-                      View Details
-                    </Button>
-                  </td>
-                  <td>
-                    {sentimentsLoading ? (
-                      <Spinner animation="border" size="sm" />
-                    ) : sentimentsError ? (
-                      <Alert variant="danger">Error</Alert>
-                    ) : (
-                      sentiments[user.id] || 'No sentiment data'
-                    )}
-                  </td>
-                  <td>{}</td>
-                  <td><Button
-                      variant="info"
-                      onClick={""}
-                    >
-                      Update
-                    </Button></td>
-                </tr>
-              ))}
+              {users.map((user) => {
+                const userScore = findUserScore(user.id);
+                return (
+                  <tr key={user.id}>
+                    <td>{`${user.firstName} ${user.lastName}`}</td>
+                    <td>{user.studentID}</td>
+                    <td>{user.course}</td>
+                    <td>
+                      <Button
+                        variant="info"
+                        onClick={() => handleShowModal(user)}
+                      >
+                        View Details
+                      </Button>
+                    </td>
+                    <td>
+                      {sentimentsLoading ? (
+                        <Spinner animation="border" size="sm" />
+                      ) : sentimentsError ? (
+                        <Alert variant="danger">Error</Alert>
+                      ) : (
+                        sentiments[user.id] || "No sentiment data"
+                      )}
+                    </td>
+                    <td className="text-center">
+                      {userScore !== null
+                        ? getStarIcons(userScore)
+                        : "No Average Status"}
+                    </td>
+                    <td>
+                      <Button variant="info" onClick={() => {}}>
+                        Update
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
         )}
@@ -110,7 +151,7 @@ function Monitoring() {
         />
       </Container>
     </>
-  )
+  );
 }
 
-export default Monitoring
+export default Monitoring;
