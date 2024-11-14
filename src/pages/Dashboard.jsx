@@ -14,13 +14,23 @@ import {
 } from 'chart.js'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
+import { getAuth } from 'firebase/auth'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 function Dashboard() {
   const { score } = useAverageStatus()
   const [chartData, setChartData] = useState(null)
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false)
   const chartRef = useRef(null)
+
+  useEffect(() => {
+    const auth = getAuth()
+    const currentUser = auth.currentUser
+    if (currentUser && currentUser.email === 'super_admin@gmail.com') {
+      setIsSuperAdmin(true)
+    }
+  }, [])
 
   useEffect(() => {
     const stressCounts = {
@@ -61,7 +71,7 @@ function Dashboard() {
     const canvas = await html2canvas(chartElement)
     const imgData = canvas.toDataURL('image/png')
     const pdf = new jsPDF('landscape')
-    pdf.addImage(imgData, 'PNG', 10, 10, 280, 150) // Adjust dimensions as needed
+    pdf.addImage(imgData, 'PNG', 10, 10, 280, 150)
     pdf.save('stress_assessment_chart.pdf')
   }
 
@@ -74,10 +84,12 @@ function Dashboard() {
           </Breadcrumb.Item>
         </Breadcrumb>
         <div>
-          <div className='d-flex justify-content-end'>
-          <Button variant="primary" className="mt-3" onClick={downloadPDF} >
-            Download as PDF
-          </Button>
+          <div className="d-flex justify-content-end">
+            {isSuperAdmin && (
+              <Button variant="primary" className="mt-3" onClick={downloadPDF}>
+                Download as PDF
+              </Button>
+            )}
           </div>
           {chartData && (
             <div ref={chartRef}>
