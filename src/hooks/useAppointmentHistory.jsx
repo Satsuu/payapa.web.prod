@@ -14,7 +14,6 @@ const useAppointmentHistory = () => {
     try {
       const appointmentHistoryRef = collection(firestore, "appointmentHistory");
 
-      // fullName is already included in appointmentHistoryData
       await addDoc(appointmentHistoryRef, appointmentHistoryData);
 
       toast.success("Appointment history saved successfully!");

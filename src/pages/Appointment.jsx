@@ -59,6 +59,14 @@ function Appointments() {
     return dayOfWeek >= 1 && dayOfWeek <= 5 && hours >= 8 && hours < 17;
   };
 
+  const formatTimeTo12Hour = (time) => {
+    const [hour, minute] = time.split(":").map(Number);
+    const isPM = hour >= 12;
+    const formattedHour = hour % 12 || 12;
+    const period = isPM ? "PM" : "AM";
+    return `${formattedHour}:${minute.toString().padStart(2, "0")} ${period}`;
+  };
+
   const handleConfirmAppointment = async () => {
     if (selectedUser) {
       if (!appointmentDate || !appointmentTime || !appointmentMessage) {
@@ -66,10 +74,12 @@ function Appointments() {
         return;
       }
 
+      const formattedTime = formatTimeTo12Hour(appointmentTime);
+
       const appointmentData = {
         userId: selectedUser.uid,
         date: appointmentDate,
-        time: appointmentTime,
+        time: formattedTime,
         message: appointmentMessage,
       };
 
@@ -140,7 +150,7 @@ function Appointments() {
                                 className="me-2 d-flex justify-content-between align-items-center"
                                 size="sm"
                                 onClick={handleSetAppointmentClick}
-                                disabled={!isCurrentlyBusinessHours()}
+                                disabled={isCurrentlyBusinessHours()}
                                 title={
                                   !isCurrentlyBusinessHours()
                                     ? "Appointments can only be set during business hours (Mon-Fri, 8 AM - 5 PM)"

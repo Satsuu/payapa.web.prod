@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button, Card, Table } from "react-bootstrap";
 import RemarksModal from "./RemarksModal";
 import useAppointmentHistory from "../hooks/useAppointmentHistory";
+import { firestore } from "../services/Firebase";
+import { doc, deleteDoc } from "firebase/firestore";
 
 function ScheduledAppointmentTable({ appointments, selectedUser }) {
   const [showModal, setShowModal] = useState(false);
@@ -66,6 +68,8 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
           "Appointment history saved successfully:",
           appointmentHistoryData
         );
+
+        await deleteAppointment(selectedAppointment.id);
       }
     } catch (err) {
       console.error("Error saving appointment history:", err);
@@ -73,6 +77,26 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
 
     handleCloseModal();
   };
+
+  const deleteAppointment = async (appointmentId) => {
+    try {
+      // Target the correct document: scheduledAppointments -> selectedUserId -> appointments -> appointmentId
+      const appointmentRef = doc(
+        firestore,
+        "scheduledAppointments",
+        selectedUser.uid,
+        "appointments",
+        appointmentId
+      );
+
+      // Delete the appointment document
+      await deleteDoc(appointmentRef);
+      console.log("Appointment deleted successfully!");
+    } catch (err) {
+      console.error("Error deleting appointment:", err);
+    }
+  };
+
   return (
     <Card>
       <Card.Body>
