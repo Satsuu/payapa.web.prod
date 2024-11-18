@@ -35,6 +35,13 @@ function Dashboard() {
   const [approvedChartData, setApprovedChartData] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const chartRef = useRef(null);
+  const approvedChartRef = useRef(null);
+  const [totalApprovedUsers, setTotalApprovedUsers] = useState(0);
+
+  const getRandomColor = () =>
+    `#${Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, "0")}`;
 
   useEffect(() => {
     const auth = getAuth();
@@ -85,19 +92,18 @@ function Dashboard() {
         )
       );
 
+      const totalApproved = data.reduce((sum, count) => sum + count, 0);
+      setTotalApprovedUsers(totalApproved);
+
+      const randomColors = data.map(() => getRandomColor());
+
       setApprovedChartData({
         labels,
         datasets: [
           {
             label: "Approved Users per Course",
             data,
-            backgroundColor: [
-              "#FF6384",
-              "#36A2EB",
-              "#FFCE56",
-              "#4BC0C0",
-              "#9966FF",
-            ],
+            backgroundColor: randomColors,
             hoverOffset: 4,
           },
         ],
@@ -115,6 +121,16 @@ function Dashboard() {
     pdf.save("stress_assessment_chart.pdf");
   };
 
+  const downloadApprovedChartPDF = async () => {
+    const chartElement = approvedChartRef.current;
+    if (!chartElement) return;
+    const canvas = await html2canvas(chartElement);
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("landscape");
+    pdf.addImage(imgData, "PNG", 10, 10, 280, 150);
+    pdf.save("approved_users_chart.pdf");
+  };
+
   return (
     <>
       <Container className="mt-5">
@@ -125,11 +141,9 @@ function Dashboard() {
         </Breadcrumb>
         <div className="p-3">
           <div className="d-flex justify-content-end">
-            {isSuperAdmin && (
-              <Button variant="primary" className="mt-3" onClick={downloadPDF}>
-                Download as PDF
-              </Button>
-            )}
+            <Button variant="outline-secondary" size="sm" onClick={downloadPDF}>
+              Download as PDF
+            </Button>
           </div>
           {chartData && (
             <div ref={chartRef}>
@@ -153,71 +167,87 @@ function Dashboard() {
             </div>
           )}
           {approvedChartData && approvedCounts && (
-            <Card className="mt-4 shadow">
-              <Card.Body>
-                <Row>
-                  <Col
-                    md={6}
-                    className="d-flex justify-content-center align-items-center"
-                  >
-                    <Pie
-                      data={approvedChartData}
-                      options={{
-                        responsive: true,
-                        plugins: {
-                          title: {
-                            display: true,
-                            text: "Approved Users by Course",
+            <div ref={approvedChartRef}>
+              <Card className="mt-4 shadow">
+                <Card.Header className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6>Total Approved Users: {totalApprovedUsers}</h6>
+                  </div>
+                  <div>
+                    <Button
+                      size="sm"
+                      variant="outline-secondary"
+                      onClick={downloadApprovedChartPDF}
+                    >
+                      Download as PDF
+                    </Button>
+                  </div>
+                </Card.Header>
+                <Card.Body>
+                  <Row>
+                    <Col
+                      md={6}
+                      className="d-flex justify-content-center align-items-center"
+                    >
+                      <Pie
+                        data={approvedChartData}
+                        options={{
+                          responsive: true,
+                          plugins: {
+                            title: {
+                              display: true,
+                              text: "Approved Users by Course",
+                            },
+                            legend: {
+                              display: false,
+                            },
                           },
-                          legend: {
-                            display: false,
-                          },
-                        },
-                      }}
-                      style={{ maxWidth: "100%", height: "auto" }}
-                    />
-                  </Col>
+                        }}
+                        style={{ maxWidth: "100%", height: "auto" }}
+                      />
+                    </Col>
 
-                  <Col md={6}>
-                    <h5 className="mb-4">Course Role Details</h5>
-                    <ul className="list-unstyled">
-                      {Object.keys(approvedCounts).map((course, index) => (
-                        <li key={course} className="mb-3">
-                          <div className="d-flex align-items-center mb-1">
-                            <span
-                              style={{
-                                width: 20,
-                                height: 20,
-                                backgroundColor:
-                                  approvedChartData?.datasets?.[0]
-                                    ?.backgroundColor?.[index] || "#000",
-                                display: "inline-block",
-                                marginRight: 10,
-                                borderRadius: "50%",
-                              }}
-                            ></span>
-                            <strong>{course}</strong>
-                          </div>
-                          <ul className="pl-4">
-                            {Object.entries(
-                              approvedCounts[course]?.roles || {}
-                            ).map(([role, count]) => (
-                              <li
-                                key={role}
-                                className="d-flex justify-content-between"
-                              >
-                                <span>{role}</span>
-                                <strong>{count}</strong>
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-                      ))}
-                    </ul>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
+                    <Col md={6}>
+                      <h5 className="mb-4">Course Role Details</h5>
+                      <ul className="list-unstyled">
+                        {Object.keys(approvedCounts).map((course, index) => (
+                          <li key={course} className="mb-3">
+                            <div className="d-flex align-items-center mb-1">
+                              <span
+                                style={{
+                                  width: 20,
+                                  height: 20,
+                                  backgroundColor:
+                                    approvedChartData?.datasets?.[0]
+                                      ?.backgroundColor?.[index] || "#000",
+                                  display: "inline-block",
+                                  marginRight: 10,
+                                  borderRadius: "50%",
+                                }}
+                              ></span>
+                              <strong>{course}</strong>
+                            </div>
+                            <ul className="pl-4">
+                              {Object.entries(
+                                approvedCounts[course]?.roles || {}
+                              ).map(([role, count]) => (
+                                <li
+                                  key={role}
+                                  className="d-flex justify-content-between"
+                                >
+                                  <span>{role}</span>
+                                  <strong>{count}</strong>
+                                </li>
+                              ))}
+                            </ul>
+                          </li>
+                        ))}
+                      </ul>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </div>
           )}
         </div>
       </Container>
