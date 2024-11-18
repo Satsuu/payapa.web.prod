@@ -23,7 +23,11 @@ function useFetchUsers() {
         usersList.forEach((user) => {
           if (user.isApproved) {
             const course = user.course;
-            counts[course] = (counts[course] || 0) + 1;
+            const role = user.role;
+
+            if (!counts[course]) counts[course] = { total: 0, roles: {} };
+            counts[course].total++;
+            counts[course].roles[role] = (counts[course].roles[role] || 0) + 1;
           }
         });
         setApprovedCounts(counts);

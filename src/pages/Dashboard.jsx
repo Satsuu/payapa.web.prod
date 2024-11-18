@@ -78,7 +78,12 @@ function Dashboard() {
 
     if (approvedCounts) {
       const labels = Object.keys(approvedCounts);
-      const data = Object.values(approvedCounts);
+      const data = labels.map((course) =>
+        Object.values(approvedCounts[course]?.roles || {}).reduce(
+          (a, b) => a + b,
+          0
+        )
+      );
 
       setApprovedChartData({
         labels,
@@ -147,11 +152,10 @@ function Dashboard() {
               />
             </div>
           )}
-          {approvedChartData && (
+          {approvedChartData && approvedCounts && (
             <Card className="mt-4 shadow">
               <Card.Body>
                 <Row>
-                  {/* Pie Chart on the Left */}
                   <Col
                     md={6}
                     className="d-flex justify-content-center align-items-center"
@@ -166,7 +170,7 @@ function Dashboard() {
                             text: "Approved Users by Course",
                           },
                           legend: {
-                            display: false, // Legend will be handled manually
+                            display: false,
                           },
                         },
                       }}
@@ -174,29 +178,39 @@ function Dashboard() {
                     />
                   </Col>
 
-                  {/* Legend and Courses on the Right */}
                   <Col md={6}>
-                    <h5 className="mb-4">Course Details</h5>
+                    <h5 className="mb-4">Course Role Details</h5>
                     <ul className="list-unstyled">
                       {Object.keys(approvedCounts).map((course, index) => (
-                        <li
-                          key={course}
-                          className="d-flex align-items-center mb-2"
-                        >
-                          <span
-                            style={{
-                              width: 20,
-                              height: 20,
-                              backgroundColor:
-                                approvedChartData.datasets[0].backgroundColor[
-                                  index
-                                ],
-                              display: "inline-block",
-                              marginRight: 10,
-                              borderRadius: "50%",
-                            }}
-                          ></span>
-                          {course}: <strong>{approvedCounts[course]}</strong>
+                        <li key={course} className="mb-3">
+                          <div className="d-flex align-items-center mb-1">
+                            <span
+                              style={{
+                                width: 20,
+                                height: 20,
+                                backgroundColor:
+                                  approvedChartData?.datasets?.[0]
+                                    ?.backgroundColor?.[index] || "#000",
+                                display: "inline-block",
+                                marginRight: 10,
+                                borderRadius: "50%",
+                              }}
+                            ></span>
+                            <strong>{course}</strong>
+                          </div>
+                          <ul className="pl-4">
+                            {Object.entries(
+                              approvedCounts[course]?.roles || {}
+                            ).map(([role, count]) => (
+                              <li
+                                key={role}
+                                className="d-flex justify-content-between"
+                              >
+                                <span>{role}</span>
+                                <strong>{count}</strong>
+                              </li>
+                            ))}
+                          </ul>
                         </li>
                       ))}
                     </ul>
