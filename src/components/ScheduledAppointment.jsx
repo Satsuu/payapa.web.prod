@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Card, Table } from "react-bootstrap";
 import RemarksModal from "./RemarksModal";
 import useAppointmentHistory from "../hooks/useAppointmentHistory";
@@ -9,6 +9,11 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
   const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const { saveAppointmentHistory, loading, error } = useAppointmentHistory();
+  const [countAppointments, setCountAppointments] = useState([]);
+
+  useEffect(() => {
+    setCountAppointments(appointments);
+  }, [appointments]);
 
   const sortedAppointments = [...appointments].sort((a, b) => {
     const dateA = new Date(`${a.date} ${a.time}`);
@@ -80,7 +85,6 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
 
   const deleteAppointment = async (appointmentId) => {
     try {
-      // Target the correct document: scheduledAppointments -> selectedUserId -> appointments -> appointmentId
       const appointmentRef = doc(
         firestore,
         "scheduledAppointments",
@@ -89,9 +93,27 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
         appointmentId
       );
 
-      // Delete the appointment document
       await deleteDoc(appointmentRef);
+
       console.log("Appointment deleted successfully!");
+
+      const updatedAppointments = countAppointments.filter(
+        (appointment) => appointment.id !== appointmentId
+      );
+
+      setCountAppointments(updatedAppointments);
+      console.log("Remaining appointments:", updatedAppointments.length);
+
+      if (updatedAppointments.length === 0) {
+        const userAppointmentsRef = doc(
+          firestore,
+          "appointments",
+          selectedUser.uid
+        );
+
+        await deleteDoc(userAppointmentsRef);
+        console.log("All appointments deleted. User data removed.");
+      }
     } catch (err) {
       console.error("Error deleting appointment:", err);
     }

@@ -94,10 +94,8 @@ function History() {
               <div className="d-flex justify-content-center">
                 <Spinner animation="border" variant="primary" />
               </div>
-            ) : displayedUsers.length === 0 ? (
-              <div className="text-center">No appointment history data</div>
             ) : (
-              <div style={{ maxHeight: "700px", overflowY: "auto" }}>
+              <div>
                 <Table className="cursor-pointer" bordered id="history-table">
                   <thead>
                     <tr>
