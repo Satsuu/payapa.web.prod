@@ -6,6 +6,7 @@ function useFetchUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [approvedCounts, setApprovedCounts] = useState({});
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -17,6 +18,19 @@ function useFetchUsers() {
         }));
         console.log("Fetched Users:", usersList);
         setUsers(usersList);
+
+        const counts = {};
+        usersList.forEach((user) => {
+          if (user.isApproved) {
+            const course = user.course;
+            const role = user.role;
+
+            if (!counts[course]) counts[course] = { total: 0, roles: {} };
+            counts[course].total++;
+            counts[course].roles[role] = (counts[course].roles[role] || 0) + 1;
+          }
+        });
+        setApprovedCounts(counts);
       } catch (err) {
         setError(err);
         console.error("Error fetching users:", err);
@@ -28,7 +42,7 @@ function useFetchUsers() {
     fetchUsers();
   }, []);
 
-  return { users, loading, error };
+  return { users, loading, error, approvedCounts };
 }
 
 export default useFetchUsers;

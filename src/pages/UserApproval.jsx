@@ -84,14 +84,15 @@ function UserApproval() {
 
   const displayedUsers =
     userRole === "subadmin"
-      ? filteredUsersTable
+      ? filteredUsersTable.filter((user) => !user.isApproved)
       : selectedCourse
       ? users.filter(
           (user) =>
             user.course &&
-            user.course.toLowerCase() === selectedCourse.toLowerCase()
+            user.course.toLowerCase() === selectedCourse.toLowerCase() &&
+            !user.isApproved
         )
-      : users;
+      : users.filter((user) => !user.isApproved);
 
   return (
     <Container className="mt-5">
