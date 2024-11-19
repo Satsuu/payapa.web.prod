@@ -120,7 +120,7 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
   };
 
   return (
-    <Card>
+    <Card style={{ maxHeight: "370px", overflow: "auto" }}>
       <Card.Body>
         <div className="d-flex justify-content-between align-items-center mb-2">
           <strong>Scheduled Appointments</strong>

@@ -111,7 +111,7 @@ function Appointments() {
         <div>
           {!loading && !error && (
             <Row>
-              <Col sm={4}>
+              <Col sm={4} style={{ maxHeight: "800px", overflow: "auto" }}>
                 {displayedAppointments
                   .filter((appointment) => appointment.user)
                   .map((appointment) => (
@@ -150,7 +150,7 @@ function Appointments() {
                                 className="me-2 d-flex justify-content-between align-items-center"
                                 size="sm"
                                 onClick={handleSetAppointmentClick}
-                                disabled={isCurrentlyBusinessHours()}
+                                disabled={!isCurrentlyBusinessHours()}
                                 title={
                                   !isCurrentlyBusinessHours()
                                     ? "Appointments can only be set during business hours (Mon-Fri, 8 AM - 5 PM)"
