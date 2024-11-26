@@ -170,7 +170,7 @@ function Appointments() {
                 </div>
                 <Row className="mt-3">
                   <Col>
-                    <Card className="h-100">
+                    <Card className="h-80">
                       <Card.Body>
                         <div className="d-flex justify-content-between align-items-center mb-2">
                           <strong>Message</strong>
@@ -179,12 +179,28 @@ function Appointments() {
                           <textarea
                             value={selectedUser.reasonForStress}
                             disabled
-                            rows={10}
+                            rows={7}
                             style={{ width: "100%" }}
                           />
                         ) : (
                           <p>No reason for stress provided</p>
                         )}
+                      </Card.Body>
+                    </Card>
+                    <Card className="h-20 mt-2">
+                      <Card.Body>
+                        <Form>
+                          <Form.Group>
+                            <Form.Label>
+                              <b>Appointment Type</b>
+                            </Form.Label>
+                            <Form.Control
+                              type="text"
+                              value={selectedUser.appointmentType}
+                              disabled
+                            />
+                          </Form.Group>
+                        </Form>
                       </Card.Body>
                     </Card>
                   </Col>
@@ -255,7 +271,7 @@ function Appointments() {
                   )}
                 </Row>
                 {selectedUser && (
-                  <Col className="mt-3">
+                  <Col className="mt-5">
                     <ScheduledAppointmentTable
                       appointments={scheduledAppointment}
                       selectedUser={selectedUser}
