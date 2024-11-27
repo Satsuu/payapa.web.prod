@@ -20,6 +20,8 @@ import useNotification from "../hooks/useNotification";
 import { getAuth } from "firebase/auth";
 import FilterDropdown from "../components/CourseFilter";
 import useUserDocument from "../hooks/useUserDocument";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 function Monitoring() {
   const { users, loading: usersLoading, error: usersError } = useFetchUsers();
@@ -114,6 +116,18 @@ function Monitoring() {
     ? users.filter((user) => user.course === selectedCourse)
     : users;
 
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    html2canvas(document.querySelector("#monitoring-table")).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const imgProps = doc.getImageProperties(imgData);
+      const pdfWidth = doc.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      doc.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      doc.save("monitoring_data.pdf");
+    });
+  };
+
   return (
     <>
       <Container className="mt-5">
@@ -134,8 +148,22 @@ function Monitoring() {
 
         {!usersLoading && !usersError && (
           <Card className="cursor-pointer">
+            <Card.Header>
+              <div className="d-flex justify-content-between align-items-center w-100">
+                <div>Monitoring Data</div>
+                <div>
+                  <Button
+                    size="sm"
+                    variant="outline-secondary"
+                    onClick={downloadPDF}
+                  >
+                    Download PDF
+                  </Button>
+                </div>
+              </div>
+            </Card.Header>
             <Card.Body>
-              <Table bordered className="cursor-pointer">
+              <Table bordered className="cursor-pointer" id="monitoring-table">
                 <thead>
                   <tr>
                     <th>Name</th>
