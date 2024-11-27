@@ -18,15 +18,25 @@ import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import useNotification from "../hooks/useNotification";
 import { getAuth } from "firebase/auth";
+import FilterDropdown from "../components/CourseFilter";
+import useUserDocument from "../hooks/useUserDocument";
 
 function Monitoring() {
   const { users, loading: usersLoading, error: usersError } = useFetchUsers();
+  const { userCourses, error: isError } = useUserDocument();
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const { score } = useAverageStatus();
   const { updateNotificationStatus } = useNotification();
+  const [selectedCourse, setSelectedCourse] = useState("");
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const userIds = useMemo(() => users.map((user) => user.id), [users]);
+
+  useEffect(() => {
+    if (isError) {
+      console.error("Error encountered while checking document:", isError);
+    }
+  }, [isError]);
 
   useEffect(() => {
     const auth = getAuth();
@@ -96,14 +106,20 @@ function Monitoring() {
     return userScore ? userScore.score : null;
   };
 
+  const handleFilterSelect = (course) => {
+    setSelectedCourse(course);
+  };
+
+  const filteredUsers = selectedCourse
+    ? users.filter((user) => user.course === selectedCourse)
+    : users;
+
   return (
     <>
       <Container className="mt-5">
         <Breadcrumb>
           <Breadcrumb.Item active>Students / Employee</Breadcrumb.Item>
         </Breadcrumb>
-        <h5>Student Employee List</h5>
-        <hr />
         {usersLoading && (
           <Spinner animation="border" role="status" className="mt-4">
             <span className="visually-hidden">Loading...</span>
@@ -119,12 +135,18 @@ function Monitoring() {
         {!usersLoading && !usersError && (
           <Card className="cursor-pointer">
             <Card.Body>
-              <Table bordered responsive className="mt-4">
+              <Table bordered className="cursor-pointer">
                 <thead>
                   <tr>
                     <th>Name</th>
                     <th>Student ID</th>
-                    <th>Course</th>
+                    <th>
+                      Course
+                      <FilterDropdown
+                        onSelect={handleFilterSelect}
+                        currentUserCourses={userCourses}
+                      />
+                    </th>
                     {isSuperAdmin && <th>Details</th>}
                     <th>Sentiment Analysis</th>
                     <th>Psychological Assessment</th>
@@ -132,7 +154,7 @@ function Monitoring() {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user) => {
+                  {filteredUsers.map((user) => {
                     const userScore = findUserScore(user.id);
                     return (
                       <tr key={user.id}>
@@ -180,7 +202,6 @@ function Monitoring() {
             </Card.Body>
           </Card>
         )}
-
         <MonitoringModal
           show={showModal}
           user={selectedUser}
