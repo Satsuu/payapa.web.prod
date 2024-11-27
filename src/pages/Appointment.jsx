@@ -196,7 +196,10 @@ function Appointments() {
                             </Form.Label>
                             <Form.Control
                               type="text"
-                              value={selectedUser.appointmentType}
+                              value={
+                                selectedUser?.appointmentType ||
+                                "No appointment type available"
+                              }
                               disabled
                             />
                           </Form.Group>
