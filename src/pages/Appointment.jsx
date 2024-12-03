@@ -45,6 +45,12 @@ function Appointments() {
     userRole === "subadmin" ? filteredAppointments : filteredAppointments;
 
   const handleUserClick = (appointment) => {
+    setSelectedUser(appointment.user);
+    console.log("Selected User:", appointment.user);
+    console.log("Selected User UID:", appointment.user.uid);
+  };
+
+  const handleSetAppointmentClick = (selectedUser) => {
     const auth = getAuth();
     const currentUserEmail = auth.currentUser?.email;
 
@@ -53,7 +59,7 @@ function Appointments() {
       return;
     }
 
-    const userRole = appointment.user.role;
+    const userRole = selectedUser?.role;
 
     if (
       currentUserEmail === "super_admin@gmail.com" &&
@@ -62,13 +68,7 @@ function Appointments() {
       toast.error("Super Admin cannot select a user with the role of Student.");
       return;
     }
-    setSelectedUser(appointment.user);
-    console.log("Selected User:", appointment.user);
-    console.log("Selected User UID:", appointment.user.uid);
-  };
-
-  const handleSetAppointmentClick = () => {
-    setShowAppointmentForm(!showAppointmentForm);
+    setShowAppointmentForm((prevState) => !prevState);
   };
 
   const isCurrentlyBusinessHours = () => {
@@ -174,7 +174,9 @@ function Appointments() {
                               sx={{ cursor: "pointer" }}
                               label={
                                 <>
-                                  {selectedUser.year}
+                                  <span style={{ marginRight: "8px" }}>
+                                    {selectedUser.year}
+                                  </span>
                                   <strong>{selectedUser.course}</strong>
                                 </>
                               }
@@ -187,7 +189,9 @@ function Appointments() {
                                 variant="outline-secondary"
                                 className="me-2 d-flex justify-content-between align-items-center"
                                 size="sm"
-                                onClick={handleSetAppointmentClick}
+                                onClick={() =>
+                                  handleSetAppointmentClick(selectedUser)
+                                }
                                 disabled={!isCurrentlyBusinessHours()}
                                 title={
                                   !isCurrentlyBusinessHours()
