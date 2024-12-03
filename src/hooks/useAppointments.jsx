@@ -39,6 +39,8 @@ const useAppointments = () => {
                   lastName: userData.lastName,
                   email: userData.email,
                   course: userData.course,
+                  year: userData.year,
+                  role: userData.role,
                   reasonForStress:
                     appointmentData.reasonForStress ||
                     "No reason for stress provided",

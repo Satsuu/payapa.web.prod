@@ -11,6 +11,7 @@ import {
   Button,
   Form,
 } from "react-bootstrap";
+import Chip from "@mui/material/Chip";
 
 import useAppointments from "../hooks/useAppointments";
 import useSaveAppointment from "../hooks/useSaveAppointment";
@@ -20,6 +21,8 @@ import useFetchScheduledAppointment from "../hooks/useFetchScheduledAppointment"
 import AddIcon from "@mui/icons-material/Add";
 import { toast } from "react-toastify";
 import ScheduledAppointmentTable from "../components/ScheduledAppointment";
+
+import { getAuth } from "firebase/auth";
 
 function Appointments() {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -42,6 +45,23 @@ function Appointments() {
     userRole === "subadmin" ? filteredAppointments : filteredAppointments;
 
   const handleUserClick = (appointment) => {
+    const auth = getAuth();
+    const currentUserEmail = auth.currentUser?.email;
+
+    if (!currentUserEmail) {
+      toast.error("Unable to identify the current user.");
+      return;
+    }
+
+    const userRole = appointment.user.role;
+
+    if (
+      currentUserEmail === "super_admin@gmail.com" &&
+      userRole === "Student"
+    ) {
+      toast.error("Super Admin cannot select a user with the role of Student.");
+      return;
+    }
     setSelectedUser(appointment.user);
     console.log("Selected User:", appointment.user);
     console.log("Selected User UID:", appointment.user.uid);
@@ -144,6 +164,18 @@ function Appointments() {
                         <>
                           <div className="d-flex justify-content-between align-items-center">
                             <h4 className="mb-0">{`${selectedUser.firstName} ${selectedUser.lastName}`}</h4>
+                            <Chip
+                              sx={{ cursor: "pointer" }}
+                              label={
+                                <>
+                                  {selectedUser.year}{" "}
+                                  <strong>{selectedUser.course}</strong>
+                                </>
+                              }
+                              variant="outlined"
+                              size="small"
+                            />
+
                             <div>
                               <Button
                                 variant="outline-secondary"
