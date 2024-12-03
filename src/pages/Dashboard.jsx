@@ -1,10 +1,10 @@
-import { useEffect, useState, useRef } from 'react'
-import '../index.css'
-import { Container, Breadcrumb, Button, Card, Col, Row } from 'react-bootstrap'
-import useAverageStatus from '../hooks/useAverageStatus'
-import useFetchUsers from '../hooks/useFetchUsers'
-import AppointmentHistory from '../components/AppointmentHistory'
-import { Bar, Pie } from 'react-chartjs-2'
+import { useEffect, useState, useRef } from "react";
+import "../index.css";
+import { Container, Breadcrumb, Button, Card, Col, Row } from "react-bootstrap";
+import useAverageStatus from "../hooks/useAverageStatus";
+import useFetchUsers from "../hooks/useFetchUsers";
+import AppointmentHistory from "../components/AppointmentHistory";
+import { Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,10 +14,10 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
-import { getAuth } from 'firebase/auth'
+} from "chart.js";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { getAuth } from "firebase/auth";
 
 ChartJS.register(
   CategoryScale,
@@ -27,118 +27,137 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend
-)
+);
 
 function Dashboard() {
-  const { score } = useAverageStatus()
-  const { approvedCounts } = useFetchUsers()
-  const [chartData, setChartData] = useState(null)
-  const [approvedChartData, setApprovedChartData] = useState(null)
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false)
-  const chartRef = useRef(null)
-  const approvedChartRef = useRef(null)
-  const [totalApprovedUsers, setTotalApprovedUsers] = useState(0)
-  const handleAppointmentHistoryPDF = useRef(null)
+  const { score } = useAverageStatus();
+  const { approvedCounts } = useFetchUsers();
+  const [chartData, setChartData] = useState(null);
+  const [approvedChartData, setApprovedChartData] = useState(null);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const chartRef = useRef(null);
+  const approvedChartRef = useRef(null);
+  const [totalApprovedUsers, setTotalApprovedUsers] = useState(0);
+  const handleAppointmentHistoryPDF = useRef(null);
 
   const getRandomColor = () =>
     `#${Math.floor(Math.random() * 16777215)
       .toString(16)
-      .padStart(6, '0')}`
+      .padStart(6, "0")}`;
 
   useEffect(() => {
-    const auth = getAuth()
-    const currentUser = auth.currentUser
-    if (currentUser && currentUser.email === 'super_admin@gmail.com') {
-      setIsSuperAdmin(true)
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    if (currentUser && currentUser.email === "super_admin@gmail.com") {
+      setIsSuperAdmin(true);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     const stressCounts = {
       Low: 0,
       Medium: 0,
       High: 0,
-      'Very High': 0,
+      "Very High": 0,
       Severe: 0,
-    }
+    };
 
     score.forEach((entry) => {
       if (entry.stress_level in stressCounts) {
-        stressCounts[entry.stress_level]++
+        stressCounts[entry.stress_level]++;
       }
-    })
+    });
 
     setChartData({
-      labels: ['Low', 'Medium', 'High', 'Very High', 'Severe'],
+      labels: ["Low", "Medium", "High", "Very High", "Severe"],
       datasets: [
         {
-          label: 'Number of Users',
+          label: "Number of Users",
           data: [
-            stressCounts['Low'],
-            stressCounts['Medium'],
-            stressCounts['High'],
-            stressCounts['Very High'],
-            stressCounts['Severe'],
+            stressCounts["Low"],
+            stressCounts["Medium"],
+            stressCounts["High"],
+            stressCounts["Very High"],
+            stressCounts["Severe"],
           ],
-          backgroundColor: 'rgba(54, 162, 235, 0.6)',
+          backgroundColor: "rgba(54, 162, 235, 0.6)",
         },
       ],
-    })
+    });
 
     if (approvedCounts) {
-      const labels = Object.keys(approvedCounts)
+      const labels = Object.keys(approvedCounts);
       const data = labels.map((course) =>
         Object.values(approvedCounts[course]?.roles || {}).reduce(
           (a, b) => a + b,
           0
         )
-      )
+      );
 
-      const totalApproved = data.reduce((sum, count) => sum + count, 0)
-      setTotalApprovedUsers(totalApproved)
+      const totalApproved = data.reduce((sum, count) => sum + count, 0);
+      setTotalApprovedUsers(totalApproved);
 
-      const randomColors = data.map(() => getRandomColor())
+      const randomColors = data.map(() => getRandomColor());
 
       setApprovedChartData({
         labels,
         datasets: [
           {
-            label: 'Approved Users per Course',
+            label: "Approved Users per Course",
             data,
             backgroundColor: randomColors,
             hoverOffset: 4,
           },
         ],
-      })
+      });
     }
-  }, [score, approvedCounts])
+  }, [score, approvedCounts]);
 
   const downloadPDF = async () => {
-    const chartElement = chartRef.current
-    if (!chartElement) return
-    const canvas = await html2canvas(chartElement)
-    const imgData = canvas.toDataURL('image/png')
-    const pdf = new jsPDF('landscape')
-    pdf.addImage(imgData, 'PNG', 10, 10, 280, 150)
-    pdf.save('stress_assessment_chart.pdf')
-  }
+    const chartElement = chartRef.current;
+    if (!chartElement) return;
+    const canvas = await html2canvas(chartElement);
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("portrait");
+
+    const templateUrl = "/pdf_template.png";
+
+    const response = await fetch(templateUrl);
+    const templateBlob = await response.blob();
+    const templateUrlObject = URL.createObjectURL(templateBlob);
+
+    pdf.addImage(templateUrlObject, "PNG", 0, 0, 210, 297);
+
+    pdf.addImage(imgData, "PNG", 15, 50, 180, 100);
+    pdf.save("stress_assessment_chart.pdf");
+  };
 
   const downloadApprovedChartPDF = async () => {
-    const chartElement = approvedChartRef.current
-    if (!chartElement) return
+    const chartElement = approvedChartRef.current;
+    if (!chartElement) return;
 
     const canvas = await html2canvas(chartElement, {
       scale: 2,
-    })
-    const imgData = canvas.toDataURL('image/png')
+    });
+    const imgData = canvas.toDataURL("image/png");
 
-    const pdf = new jsPDF('landscape')
-    const imgWidth = 180
-    const imgHeight = (canvas.height * imgWidth) / canvas.width
+    const pdf = new jsPDF("portrait");
+    const imgWidth = 180;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight)
-    pdf.save('approved_users_chart.pdf')
-  }
+    const templateUrl = "/pdf_template.png";
+
+    const response = await fetch(templateUrl);
+    const templateBlob = await response.blob();
+    const templateUrlObject = URL.createObjectURL(templateBlob);
+
+    pdf.addImage(templateUrlObject, "PNG", 0, 0, 210, 297);
+
+    const chartX = 10;
+    const chartY = 50;
+    pdf.addImage(imgData, "PNG", chartX, chartY, imgWidth, imgHeight);
+    pdf.save("approved_users_chart.pdf");
+  };
 
   return (
     <>
@@ -164,12 +183,12 @@ function Dashboard() {
                     legend: { display: false },
                     title: {
                       display: true,
-                      text: 'Psychological Assessment',
+                      text: "Psychological Assessment",
                     },
                   },
                   scales: {
-                    x: { title: { display: true, text: 'Level of Stress' } },
-                    y: { title: { display: true, text: 'Number of Users' } },
+                    x: { title: { display: true, text: "Level of Stress" } },
+                    y: { title: { display: true, text: "Number of Users" } },
                   },
                 }}
               />
@@ -206,14 +225,14 @@ function Dashboard() {
                           plugins: {
                             title: {
                               display: true,
-                              text: 'Approved Users by Course',
+                              text: "Approved Users by Course",
                             },
                             legend: {
                               display: false,
                             },
                           },
                         }}
-                        style={{ maxWidth: '400px', height: '400px' }}
+                        style={{ maxWidth: "400px", height: "400px" }}
                       />
                     </Col>
 
@@ -229,10 +248,10 @@ function Dashboard() {
                                   height: 20,
                                   backgroundColor:
                                     approvedChartData?.datasets?.[0]
-                                      ?.backgroundColor?.[index] || '#000',
-                                  display: 'inline-block',
+                                      ?.backgroundColor?.[index] || "#000",
+                                  display: "inline-block",
                                   marginRight: 10,
-                                  borderRadius: '50%',
+                                  borderRadius: "50%",
                                 }}
                               ></span>
                               <strong>{course}</strong>
@@ -277,7 +296,7 @@ function Dashboard() {
                     title="Appointments by Course"
                     firestoreCollection="appointmentHistory"
                     onDownload={(downloadFn) => {
-                      handleAppointmentHistoryPDF.current = downloadFn
+                      handleAppointmentHistoryPDF.current = downloadFn;
                     }}
                   />
                 </Col>
@@ -287,7 +306,7 @@ function Dashboard() {
         </div>
       </Container>
     </>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;
