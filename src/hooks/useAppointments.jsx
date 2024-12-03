@@ -45,6 +45,7 @@ const useAppointments = () => {
                     appointmentData.reasonForStress ||
                     "No reason for stress provided",
                   appointmentType: appointmentData.appointmentType,
+                  timestamp: appointmentData.timestamp,
                 },
               };
 
