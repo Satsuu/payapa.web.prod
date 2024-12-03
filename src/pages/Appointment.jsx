@@ -147,6 +147,12 @@ function Appointments() {
                             <p className="text-muted">
                               {appointment.user.email}
                             </p>
+                            <p className="text-muted">
+                              {appointment.user.timestamp}
+                            </p>
+                            <p className="text-muted">
+                              {appointment.user.role}
+                            </p>
                           </>
                         ) : (
                           <p>No user found for this appointment</p>
@@ -168,7 +174,7 @@ function Appointments() {
                               sx={{ cursor: "pointer" }}
                               label={
                                 <>
-                                  {selectedUser.year}{" "}
+                                  {selectedUser.year}
                                   <strong>{selectedUser.course}</strong>
                                 </>
                               }
