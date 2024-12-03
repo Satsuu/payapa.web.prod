@@ -174,7 +174,9 @@ function Appointments() {
                               sx={{ cursor: "pointer" }}
                               label={
                                 <>
-                                  {selectedUser.year}
+                                  <span style={{ marginRight: "8px" }}>
+                                    {selectedUser.year}
+                                  </span>
                                   <strong>{selectedUser.course}</strong>
                                 </>
                               }
