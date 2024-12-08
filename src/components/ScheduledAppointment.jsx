@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
-import { Button, Card, Table } from "react-bootstrap";
-import RemarksModal from "./RemarksModal";
+import { Button, Card, Table, Form } from "react-bootstrap";
 import useAppointmentHistory from "../hooks/useAppointmentHistory";
 import { firestore } from "../services/Firebase";
 import { doc, deleteDoc } from "firebase/firestore";
 
 function ScheduledAppointmentTable({ appointments, selectedUser }) {
-  const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const { saveAppointmentHistory, loading, error } = useAppointmentHistory();
   const [countAppointments, setCountAppointments] = useState([]);
+  const [remarks, setRemarks] = useState({});
 
   useEffect(() => {
     setCountAppointments(appointments);
@@ -20,13 +19,6 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
     const dateB = new Date(`${b.date} ${b.time}`);
     return dateB - dateA;
   });
-
-  const handleShowModal = (appointment) => {
-    setSelectedAppointment(appointment);
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => setShowModal(false);
 
   const constructAppointmentHistoryData = (
     selectedUser,
@@ -55,8 +47,13 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
   };
 
   const handleSubmitRemarks = async (remarks) => {
-    if (!selectedUser || !selectedAppointment) {
-      console.error("Missing user or appointment data");
+    if (!selectedUser) {
+      console.error("User data is missing");
+      return;
+    }
+
+    if (!selectedAppointment) {
+      console.error("Appointment data is missing");
       return;
     }
 
@@ -79,8 +76,6 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
     } catch (err) {
       console.error("Error saving appointment history:", err);
     }
-
-    handleCloseModal();
   };
 
   const deleteAppointment = async (appointmentId) => {
@@ -119,6 +114,17 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
     }
   };
 
+  const handleRemarksChange = (appointmentId, value) => {
+    setRemarks((prevRemarks) => ({
+      ...prevRemarks,
+      [appointmentId]: value,
+    }));
+  };
+
+  const handleSelectAppointment = (appointment) => {
+    setSelectedAppointment(appointment);
+  };
+
   return (
     <Card style={{ maxHeight: "370px", overflow: "auto" }}>
       <Card.Body>
@@ -133,22 +139,41 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
                 <th>Time</th>
                 <th>Message</th>
                 <th>Respond</th>
+                <th>Remarks</th>
                 <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
               {sortedAppointments.map((appointment) => (
-                <tr key={appointment.id}>
+                <tr
+                  key={appointment.id}
+                  onClick={() => handleSelectAppointment(appointment)}
+                >
                   <td>{appointment.date}</td>
                   <td>{appointment.time}</td>
                   <td>{appointment.message}</td>
                   <td>{appointment.respond}</td>
+                  <td>
+                    <Form.Control
+                      as="textarea"
+                      value={remarks[appointment.id] || ""}
+                      onChange={(e) =>
+                        handleRemarksChange(appointment.id, e.target.value)
+                      }
+                      placeholder="Enter remarks"
+                    />
+                  </td>
                   <td className="text-center">
                     <Button
                       variant="success"
                       size="sm"
-                      onClick={() => handleShowModal(appointment)}
-                      disabled={appointment.respond === "Pending"}
+                      onClick={() =>
+                        handleSubmitRemarks(remarks[appointment.id])
+                      }
+                      disabled={
+                        appointment.respond === "Pending" ||
+                        !remarks[appointment.id]
+                      }
                     >
                       Finish Appointment
                     </Button>
@@ -166,13 +191,6 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
           </Table>
         )}
       </Card.Body>
-
-      <RemarksModal
-        show={showModal}
-        handleClose={handleCloseModal}
-        appointment={selectedAppointment}
-        onSubmit={handleSubmitRemarks}
-      />
     </Card>
   );
 }
