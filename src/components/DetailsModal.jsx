@@ -9,6 +9,16 @@ function DetailsModal({ show, onHide, user }) {
       <Modal.Body>
         {user ? (
           <div>
+            <img
+              src={user.imageUrl}
+              alt={`${user.firstName} ${user.lastName}`}
+              style={{
+                width: "150px",
+                height: "150px",
+                objectFit: "cover",
+                borderRadius: "8px",
+              }}
+            />
             <p>
               <strong>First Name:</strong> {user.firstName}
             </p>

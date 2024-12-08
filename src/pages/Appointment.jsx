@@ -131,7 +131,7 @@ function Appointments() {
         <div>
           {!loading && !error && (
             <Row>
-              <Col sm={4} style={{ maxHeight: "800px", overflow: "auto" }}>
+              <Col sm={4} style={{ maxHeight: "428px", overflow: "auto" }}>
                 {displayedAppointments
                   .filter((appointment) => appointment.user)
                   .map((appointment) => (
@@ -315,6 +315,8 @@ function Appointments() {
                     </Col>
                   )}
                 </Row>
+              </Col>
+              <div>
                 {selectedUser && (
                   <Col className="mt-5">
                     <ScheduledAppointmentTable
@@ -323,7 +325,7 @@ function Appointments() {
                     />
                   </Col>
                 )}
-              </Col>
+              </div>
             </Row>
           )}
         </div>
