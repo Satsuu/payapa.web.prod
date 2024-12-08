@@ -65,39 +65,48 @@ function AppointmentHistory({ title, firestoreCollection, onDownload }) {
   }, [firestoreCollection])
 
   const handleDownloadPDF = async () => {
-    if (!chartRef.current) return
-
+    if (!chartRef.current) return;
+  
     const canvas = await html2canvas(chartRef.current, {
       scale: 2,
-    })
-
-    const imgData = canvas.toDataURL('image/png')
-
-    const pdf = new jsPDF('landscape', 'mm', 'a4')
-
-    const pdfWidth = pdf.internal.pageSize.getWidth() - 20
-    const pdfHeight = pdf.internal.pageSize.getHeight() - 20
-
-    const canvasWidth = canvas.width
-    const canvasHeight = canvas.height
-    const canvasAspectRatio = canvasWidth / canvasHeight
-
-    let chartWidth, chartHeight
-    if (canvasAspectRatio > 1) {
-      chartWidth = pdfWidth
-      chartHeight = pdfWidth / canvasAspectRatio
-    } else {
-      chartHeight = pdfHeight
-      chartWidth = pdfHeight * canvasAspectRatio
+    });
+  
+    const imgData = canvas.toDataURL('image/png');
+  
+    const pdf = new jsPDF('portrait', 'mm', 'a4');
+  
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+  
+    const templateUrl = "/pdf_template.png";
+  
+    try {
+      const response = await fetch(templateUrl);
+      const templateBlob = await response.blob();
+      const templateUrlObject = URL.createObjectURL(templateBlob);
+  
+      // Add template background (header and footer included in template)
+      pdf.addImage(templateUrlObject, 'PNG', 0, 0, pdfWidth, pdfHeight);
+  
+      // Calculate chart placement and size
+      const margin = 20; // Adjust margin for padding
+      const chartWidth = pdfWidth - margin * 2;
+      const chartHeight = (canvas.height * chartWidth) / canvas.width; // Maintain aspect ratio
+  
+      const chartX = (pdfWidth - chartWidth) / 2; // Center horizontally
+      const chartY = 60; // Position below header
+  
+      pdf.addImage(imgData, 'PNG', chartX, chartY, chartWidth, chartHeight);
+  
+      // Save the PDF with appropriate title
+      const formattedTitle = title ? title.replace(/\s+/g, '_').toLowerCase() : 'chart';
+      pdf.save(`${formattedTitle}_chart.pdf`);
+    } catch (error) {
+      console.error("Error fetching the template:", error);
     }
-
-    const xOffset = (pdf.internal.pageSize.getWidth() - chartWidth) / 2
-    const yOffset = (pdf.internal.pageSize.getHeight() - chartHeight) / 2
-
-    pdf.addImage(imgData, 'PNG', xOffset, yOffset, chartWidth, chartHeight)
-
-    pdf.save(`${title.replace(/\s+/g, '_').toLowerCase()}_chart.pdf`)
-  }
+  };
+  
+  
 
   // Expose download method
   useEffect(() => {
