@@ -116,16 +116,81 @@ function Monitoring() {
     ? users.filter((user) => user.course === selectedCourse)
     : users;
 
-  const downloadPDF = () => {
-    const doc = new jsPDF();
-    html2canvas(document.querySelector("#monitoring-table")).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const imgProps = doc.getImageProperties(imgData);
-      const pdfWidth = doc.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      doc.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      doc.save("monitoring_data.pdf");
+  const downloadPDF = async () => {
+    const originalTable = document.querySelector("#monitoring-table");
+    const tableClone = originalTable.cloneNode(true);
+
+    const headerRow = tableClone.querySelector("thead tr");
+    const rows = tableClone.querySelectorAll("tbody tr");
+
+    // Define columns to remove
+    const columnsToRemove = [];
+    headerRow.querySelectorAll("th").forEach((th, index) => {
+      if (
+        th.textContent.includes("Details") ||
+        th.textContent.includes("Update")
+      ) {
+        columnsToRemove.push(index);
+      }
     });
+
+    // Remove columns from back to front to maintain correct indices
+    columnsToRemove.reverse().forEach((columnIndex) => {
+      headerRow.deleteCell(columnIndex);
+      rows.forEach((row) => row.deleteCell(columnIndex));
+    });
+
+    const doc = new jsPDF();
+    const ITEMS_PER_PAGE = 20;
+    const margin = 15;
+    const templateUrl = "/pdf_template.png";
+
+    // Fetch template once
+    const response = await fetch(templateUrl);
+    const templateBlob = await response.blob();
+    const templateUrlObject = URL.createObjectURL(templateBlob);
+
+    // Split the table into chunks
+    for (let i = 0; i < filteredUsers.length; i += ITEMS_PER_PAGE) {
+      if (i > 0) {
+        doc.addPage();
+      }
+
+      // Create temporary container for current page
+      const tempDiv = document.createElement("div");
+      tempDiv.style.position = "absolute";
+      tempDiv.style.left = "-9999px";
+      document.body.appendChild(tempDiv);
+
+      // Clone the modified table for this page
+      const pageTable = tableClone.cloneNode(true);
+      const tbody = pageTable.querySelector("tbody");
+      const allRows = Array.from(tbody.querySelectorAll("tr"));
+      tbody.innerHTML = "";
+
+      // Add only the rows for this page
+      const pageRows = allRows.slice(i, i + ITEMS_PER_PAGE);
+      pageRows.forEach((row) => tbody.appendChild(row.cloneNode(true)));
+
+      tempDiv.appendChild(pageTable);
+
+      try {
+        const canvas = await html2canvas(pageTable);
+        const imgData = canvas.toDataURL("image/png");
+        const imgProps = doc.getImageProperties(imgData);
+        const pdfWidth = doc.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        const effectiveWidth = pdfWidth - 2 * margin;
+
+        doc.addImage(templateUrlObject, "PNG", 0, 0, 210, 297);
+        doc.addImage(imgData, "PNG", margin, 30, effectiveWidth, pdfHeight);
+      } finally {
+        document.body.removeChild(tempDiv);
+      }
+    }
+
+    doc.save("monitoring_data.pdf");
+    URL.revokeObjectURL(templateUrlObject);
   };
 
   return (

@@ -54,16 +54,67 @@ function History() {
   const displayedUsers =
     userRole === "subadmin" ? filteredUsersTable : filteredUsersTable;
 
-  const downloadPDF = () => {
+  const downloadPDF = async () => {
     const doc = new jsPDF();
-    html2canvas(document.querySelector("#history-table")).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const imgProps = doc.getImageProperties(imgData);
-      const pdfWidth = doc.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      doc.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      doc.save("history_data.pdf");
-    });
+    const ITEMS_PER_PAGE = 20;
+    const margin = 15;
+    const templateUrl = "/pdf_template.png";
+
+    const response = await fetch(templateUrl);
+    const templateBlob = await response.blob();
+    const templateUrlObject = URL.createObjectURL(templateBlob);
+
+    for (let i = 0; i < displayedUsers.length; i += ITEMS_PER_PAGE) {
+      if (i > 0) {
+        doc.addPage();
+      }
+
+      const tempDiv = document.createElement("div");
+      tempDiv.style.position = "absolute";
+      tempDiv.style.left = "-9999px";
+      document.body.appendChild(tempDiv);
+
+      const table = document.createElement("table");
+      table.className = "table table-bordered";
+
+      const header = document
+        .querySelector("#history-table thead")
+        .cloneNode(true);
+      table.appendChild(header);
+
+      const tbody = document.createElement("tbody");
+      const pageUsers = displayedUsers.slice(i, i + ITEMS_PER_PAGE);
+      pageUsers.forEach((user) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${user.fullName}</td>
+          <td>${user.course}</td>
+          <td class="text-center">${user.time} ${user.date}</td>
+          <td class="text-center">${user.endTime} ${user.endDate}</td>
+          <td>${user.remarks}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      tempDiv.appendChild(table);
+
+      try {
+        const canvas = await html2canvas(table);
+        const imgData = canvas.toDataURL("image/png");
+        const imgProps = doc.getImageProperties(imgData);
+        const pdfWidth = doc.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        const effectiveWidth = pdfWidth - 2 * margin;
+
+        doc.addImage(templateUrlObject, "PNG", 0, 0, 210, 297);
+        doc.addImage(imgData, "PNG", margin, 30, effectiveWidth, pdfHeight);
+      } finally {
+        document.body.removeChild(tempDiv);
+      }
+    }
+
+    doc.save("history_data.pdf");
+    URL.revokeObjectURL(templateUrlObject);
   };
 
   return (
