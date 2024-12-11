@@ -139,7 +139,7 @@ function ScheduledAppointmentTable({ appointments, selectedUser }) {
                 <th>Time</th>
                 <th>Message</th>
                 <th>Respond</th>
-                <th>Remarks</th>
+                <th>Consultation Summary</th>
                 <th className="text-center">Action</th>
               </tr>
             </thead>
