@@ -123,7 +123,6 @@ function Monitoring() {
     const headerRow = tableClone.querySelector("thead tr");
     const rows = tableClone.querySelectorAll("tbody tr");
 
-    // Define columns to remove
     const columnsToRemove = [];
     headerRow.querySelectorAll("th").forEach((th, index) => {
       if (
@@ -134,7 +133,6 @@ function Monitoring() {
       }
     });
 
-    // Remove columns from back to front to maintain correct indices
     columnsToRemove.reverse().forEach((columnIndex) => {
       headerRow.deleteCell(columnIndex);
       rows.forEach((row) => row.deleteCell(columnIndex));
@@ -145,30 +143,25 @@ function Monitoring() {
     const margin = 15;
     const templateUrl = "/pdf_template.png";
 
-    // Fetch template once
     const response = await fetch(templateUrl);
     const templateBlob = await response.blob();
     const templateUrlObject = URL.createObjectURL(templateBlob);
 
-    // Split the table into chunks
     for (let i = 0; i < filteredUsers.length; i += ITEMS_PER_PAGE) {
       if (i > 0) {
         doc.addPage();
       }
 
-      // Create temporary container for current page
       const tempDiv = document.createElement("div");
       tempDiv.style.position = "absolute";
       tempDiv.style.left = "-9999px";
       document.body.appendChild(tempDiv);
 
-      // Clone the modified table for this page
       const pageTable = tableClone.cloneNode(true);
       const tbody = pageTable.querySelector("tbody");
       const allRows = Array.from(tbody.querySelectorAll("tr"));
       tbody.innerHTML = "";
 
-      // Add only the rows for this page
       const pageRows = allRows.slice(i, i + ITEMS_PER_PAGE);
       pageRows.forEach((row) => tbody.appendChild(row.cloneNode(true)));
 

@@ -15,6 +15,7 @@ import Appointments from "./pages/Appointment";
 import UserApproval from "./pages/UserApproval";
 import Monitoring from "./pages/Monitoring";
 import History from "./pages/History";
+import StudentList from "./pages/StudentList";
 
 import NavigationBar from "./components/NavigationBar";
 import PrivateRoute from "./components/PrivateRoute";
@@ -75,6 +76,14 @@ function AppContent() {
           element={
             <PrivateRoute>
               <History />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/student_list"
+          element={
+            <PrivateRoute>
+              <StudentList />
             </PrivateRoute>
           }
         />

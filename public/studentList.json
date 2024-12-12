@@ -1,0 +1,352 @@
+[
+  {
+    "name": "John Smith",
+    "idNumber": "20224321",
+    "courseYear": "BSIT 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Jane Doe",
+    "idNumber": "20225512",
+    "courseYear": "BSCS 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Michael Johnson",
+    "idNumber": "20223985",
+    "courseYear": "BSBA 3rd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Emily Davis",
+    "idNumber": "20221234",
+    "courseYear": "BSED 4th Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Daniel Brown",
+    "idNumber": "20226789",
+    "courseYear": "BSN 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Sophia Martinez",
+    "idNumber": "20224567",
+    "courseYear": "BSA 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Liam Wilson",
+    "idNumber": "20227890",
+    "courseYear": "BSIT 3rd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Emma Taylor",
+    "idNumber": "20223210",
+    "courseYear": "BSCS 4th Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Noah Lee",
+    "idNumber": "20221987",
+    "courseYear": "BSBA 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Olivia Moore",
+    "idNumber": "20225345",
+    "courseYear": "BSED 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "James Clark",
+    "idNumber": "20224678",
+    "courseYear": "BSN 3rd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Isabella Allen",
+    "idNumber": "20227456",
+    "courseYear": "BSA 4th Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Elijah Scott",
+    "idNumber": "20223890",
+    "courseYear": "BSIT 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Mia Carter",
+    "idNumber": "20222567",
+    "courseYear": "BSCS 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "William Hill",
+    "idNumber": "20226654",
+    "courseYear": "BSBA 3rd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Amelia Adams",
+    "idNumber": "20221123",
+    "courseYear": "BSED 4th Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Benjamin King",
+    "idNumber": "20229001",
+    "courseYear": "BSN 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Charlotte Wright",
+    "idNumber": "20225987",
+    "courseYear": "BSA 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Lucas Martin",
+    "idNumber": "20227754",
+    "courseYear": "BSIT 3rd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Harper White",
+    "idNumber": "20224365",
+    "courseYear": "BSCS 4th Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Alexander Harris",
+    "idNumber": "20226984",
+    "courseYear": "BSBA 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Evelyn Green",
+    "idNumber": "20222112",
+    "courseYear": "BSED 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Mason Walker",
+    "idNumber": "20223456",
+    "courseYear": "BSN 3rd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Aria Hall",
+    "idNumber": "20225678",
+    "courseYear": "BSA 4th Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Logan Perez",
+    "idNumber": "20227888",
+    "courseYear": "BSIT 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Abigail Young",
+    "idNumber": "20223321",
+    "courseYear": "BSCS 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Ethan Robinson",
+    "idNumber": "20224997",
+    "courseYear": "BSBA 3rd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Avery Hernandez",
+    "idNumber": "20225789",
+    "courseYear": "BSED 4th Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Jacob Mitchell",
+    "idNumber": "20221111",
+    "courseYear": "BSN 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Ella Garcia",
+    "idNumber": "20227901",
+    "courseYear": "BSA 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Jackson Gonzalez",
+    "idNumber": "20222345",
+    "courseYear": "BSIT 3rd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Scarlett Phillips",
+    "idNumber": "20226965",
+    "courseYear": "BSCS 4th Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Aiden Campbell",
+    "idNumber": "20224544",
+    "courseYear": "BSBA 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Grace Parker",
+    "idNumber": "20227231",
+    "courseYear": "BSED 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Sebastian Evans",
+    "idNumber": "20221105",
+    "courseYear": "BSN 3rd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Chloe Collins",
+    "idNumber": "20225210",
+    "courseYear": "BSA 4th Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Henry Edwards",
+    "idNumber": "20223489",
+    "courseYear": "BSIT 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Victoria Murphy",
+    "idNumber": "20226999",
+    "courseYear": "BSCS 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Samuel Watson",
+    "idNumber": "20221187",
+    "courseYear": "BSBA 3rd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Luna Torres",
+    "idNumber": "20225998",
+    "courseYear": "BSED 4th Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Owen Ramirez",
+    "idNumber": "20224411",
+    "courseYear": "BSN 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Ella Morgan",
+    "idNumber": "20227821",
+    "courseYear": "BSA 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Levi Barnes",
+    "idNumber": "20224333",
+    "courseYear": "BSIT 3rd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Penelope Bell",
+    "idNumber": "20222578",
+    "courseYear": "BSCS 4th Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Jack Sanders",
+    "idNumber": "20226742",
+    "courseYear": "BSBA 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Zoe Price",
+    "idNumber": "20221732",
+    "courseYear": "BSED 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Matthew Kelly",
+    "idNumber": "20227777",
+    "courseYear": "BSN 3rd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Layla Hughes",
+    "idNumber": "20224887",
+    "courseYear": "BSA 4th Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Lucas Reed",
+    "idNumber": "20221106",
+    "courseYear": "BSIT 1st Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  },
+  {
+    "name": "Aurora Foster",
+    "idNumber": "20222679",
+    "courseYear": "BSCS 2nd Year",
+    "schoolYear": "2024-2025",
+    "semester": "1st"
+  }
+]
