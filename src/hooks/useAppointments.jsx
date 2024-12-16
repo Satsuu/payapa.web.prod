@@ -66,19 +66,19 @@ const useAppointments = () => {
         if (userCourses.length > 0) {
           const filtered = appointmentsWithUsers.filter((appointment) => {
             console.log("Checking appointment:", appointment);
-            console.log(
-              "User course matches:",
-              appointment.user?.course.toLowerCase(),
-              "in",
-              userCourses.map((course) => course.toLowerCase())
-            );
-            return (
-              appointment.user &&
-              userCourses.some(
+            if (appointment.user && appointment.user.course) {
+              console.log(
+                "User course matches:",
+                appointment.user.course.toLowerCase(),
+                "in",
+                userCourses.map((course) => course.toLowerCase())
+              );
+              return userCourses.some(
                 (course) =>
                   course.toLowerCase() === appointment.user.course.toLowerCase()
-              )
-            );
+              );
+            }
+            return false;
           });
           setFilteredAppointments(filtered);
           console.log("Filtered Appointments:", filtered);
