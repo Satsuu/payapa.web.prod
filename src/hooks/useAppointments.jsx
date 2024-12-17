@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { firestore } from "../services/Firebase";
 import useUserDocument from "./useUserDocument";
 
@@ -9,6 +10,19 @@ const useAppointments = () => {
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUserEmail(user.email);
+      } else {
+        setCurrentUserEmail(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const fetchAppointmentsWithUsers = async () => {
@@ -21,16 +35,12 @@ const useAppointments = () => {
             const appointmentId = appointmentDoc.id;
             const appointmentData = appointmentDoc.data();
 
-            console.log("Appointment Data:", appointmentData);
-
             const userDocRef = doc(firestore, "users", appointmentId);
             const userDoc = await getDoc(userDocRef);
 
             if (userDoc.exists()) {
               const userData = userDoc.data();
-              console.log("Fetched User Data:", userData);
-
-              const appointmentWithUser = {
+              return {
                 id: appointmentId,
                 ...appointmentData,
                 user: {
@@ -48,40 +58,29 @@ const useAppointments = () => {
                   timestamp: appointmentData.timestamp,
                 },
               };
-
-              return appointmentWithUser;
             } else {
-              return {
-                id: appointmentId,
-                ...appointmentData,
-                user: null,
-              };
+              return { id: appointmentId, ...appointmentData, user: null };
             }
           })
         );
 
         setAppointments(appointmentsWithUsers);
-        console.log("All Appointments with Users:", appointmentsWithUsers);
 
-        if (userCourses.length > 0) {
+        // Super admin bypasses filtering
+        if (currentUserEmail === "super_admin@gmail.com") {
+          setFilteredAppointments(appointmentsWithUsers);
+        } else if (userCourses.length > 0) {
           const filtered = appointmentsWithUsers.filter((appointment) => {
-            console.log("Checking appointment:", appointment);
-            if (appointment.user && appointment.user.course) {
-              console.log(
-                "User course matches:",
-                appointment.user.course.toLowerCase(),
-                "in",
-                userCourses.map((course) => course.toLowerCase())
-              );
-              return userCourses.some(
+            return (
+              appointment.user &&
+              appointment.user.course &&
+              userCourses.some(
                 (course) =>
                   course.toLowerCase() === appointment.user.course.toLowerCase()
-              );
-            }
-            return false;
+              )
+            );
           });
           setFilteredAppointments(filtered);
-          console.log("Filtered Appointments:", filtered);
         } else {
           setFilteredAppointments(appointmentsWithUsers);
         }
@@ -93,10 +92,10 @@ const useAppointments = () => {
       }
     };
 
-    if (userCourses.length > 0) {
+    if (currentUserEmail) {
       fetchAppointmentsWithUsers();
     }
-  }, [userCourses]);
+  }, [userCourses, currentUserEmail]);
 
   return {
     appointments,
